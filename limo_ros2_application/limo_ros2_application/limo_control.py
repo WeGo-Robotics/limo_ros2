@@ -36,13 +36,14 @@ class LimoControl(Node):
     def timer_callback(self):
         msg = Twist()
         msg.linear.x = 0.2
-        msg.angular.z = self.gap * 0.0055
+        msg.angular.z = self.gap * 0.007
 
-        if self.e_stop_flag :
+        if self.gap < -900:
+            msg.linear.x = 0.1
+            msg.angular.z - 0.0
+        elif self.e_stop_flag :
             msg.linear.x = 0.0
             msg.angular.z - 0.0
-        elif self.gap < -900:
-            msg.linear.x = 0.1
         else:
             pass
         self.publisher_.publish(msg)

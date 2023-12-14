@@ -3,7 +3,7 @@ from rclpy.node import Node
 
 from std_msgs.msg import Bool 
 from sensor_msgs.msg import LaserScan
-from math import pi
+from math import pi, cos, sin
 
 class LimoEStop(Node):
 
@@ -19,30 +19,24 @@ class LimoEStop(Node):
         self.publisher_ = self.create_publisher(Bool, 'e_stop', 10)
 
         self.lidar_flag = False
-        self.deg = 10
         
     def laser_callback(self, msg):
-        num = 0
+        estop = Bool()
+        estop.data = False
+
         if not self.lidar_flag:
-            self.degrees = [
-                (msg.angle_min + (i * msg.angle_increment)) * 180 / pi
-                for i, data in enumerate(msg.ranges)
-            ]
+            self.angle_min = msg.angle_min
+            self.angle_increment = msg.angle_increment
             self.lidar_flag = True
 
         for i, data in enumerate(msg.ranges):
-            if (-self.deg < self.degrees[i] < self.deg and i < len(self.degrees) and 0 < msg.ranges[i] < 0.5):
-                num += 1
-        
-        if num < len(self.degrees):
-            if num < 10:
-                estop = Bool()
-                estop.data = False
-            else:
-                estop = Bool()
+            current_angle = self.angle_min + self.angle_increment*i
+            cx = data * cos(current_angle)
+            cy = data * sin(current_angle)
+            if 0.01 < cx <0.2 and -0.1 < cy < 0.1:
                 estop.data = True
-        else:
-            print("Invalid lidar data, index out of range")
+                break
+
         self.publisher_.publish(estop)
 
 def main(args=None):
