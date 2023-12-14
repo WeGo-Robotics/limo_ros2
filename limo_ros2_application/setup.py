@@ -1,4 +1,7 @@
 from setuptools import find_packages, setup
+import os
+from glob import glob
+
 
 package_name = 'limo_ros2_application'
 
@@ -10,6 +13,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*')))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -23,6 +27,7 @@ setup(
             'move_limo = limo_ros2_application.move_limo:main',
             'limo_e_stop = limo_ros2_application.limo_e_stop:main',
             'detect_line = limo_ros2_application.detect_line:main',
+            'limo_control = limo_ros2_application.limo_control:main',
         ],
     },
 )
