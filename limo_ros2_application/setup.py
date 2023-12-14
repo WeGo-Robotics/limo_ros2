@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'move_limo = limo_ros2_application.move_limo:main',
             'limo_e_stop = limo_ros2_application.limo_e_stop:main',
+            'detect_line = limo_ros2_application.detect_line:main',
         ],
     },
 )
